@@ -34,13 +34,9 @@ RUN mkdir -pm755 /etc/apt/keyrings && curl -fsSL "https://download.docker.com/li
     rm -rf /var/lib/apt/list/* && \
     nvidia-ctk runtime configure --runtime=docker
 
-COPY modprobe start-docker.sh entrypoint.sh /usr/local/bin/
-COPY supervisor/ /etc/supervisor/conf.d/
-COPY logger.sh /opt/bash-utils/logger.sh
-
-RUN chmod +x /usr/local/bin/start-docker.sh /usr/local/bin/entrypoint.sh /usr/local/bin/modprobe
+COPY modprobe /usr/local/bin/
+RUN chmod +x /usr/local/bin/modprobe
 
 VOLUME /var/lib/docker
 
-ENTRYPOINT ["entrypoint.sh"]
-CMD ["bash"]
+CMD ["dockerd", "--host=unix:///var/run/docker.sock", "--host=tcp://0.0.0.0:2375"]
